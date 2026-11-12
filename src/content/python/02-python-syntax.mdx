@@ -1,0 +1,130 @@
+---
+title: "Python Syntax"
+chapter: 2
+---
+
+<LearningObjectives
+  items={[
+    "Explain what programming syntax means in Python.",
+    "Write proper indentation using spaces to organize code blocks.",
+    "Add single-line and multi-line comments to explain your code.",
+    "Write and run a basic Python program without syntax errors."
+  ]}
+/>
+
+## What Is Python Syntax?
+
+**Syntax** is the set of grammar and spelling rules that a programming language expects. Just like English sentences need correct punctuation to make sense, Python requires exact spelling, quotes, parentheses, and spacing.
+
+If you break a syntax rule, Python stops before running your code and displays a `SyntaxError` telling you where to look.
+
+## Basic Syntax Rules
+
+Keep these four rules in mind as you write Python:
+
+- **Case-sensitive:** `print` and `Print` are different. Always check uppercase vs. lowercase letters.
+- **One statement per line:** Normally, each instruction sits on its own line without needing a semicolon `;`.
+- **Matching pairs:** Every opening quote `"` or `'` and opening parenthesis `(` must have a matching closing pair.
+- **Indentation matters:** Leading spaces at the start of a line are part of Python's grammar.
+
+<CodeExample
+  title="A clean Python program"
+  description="Each instruction runs in order from top to bottom."
+  code={`print("Step 1: Start the program")
+print("Step 2: Run the calculation")
+print(10 + 20)`}
+  expectedOutput={`Step 1: Start the program
+Step 2: Run the calculation
+30`}
+/>
+
+## Indentation in Python
+
+Many languages use curly braces `{ }` to group lines of code inside conditions or loops. Python uses **indentation** (spaces at the beginning of a line) instead.
+
+The standard convention is **4 spaces** per indentation level. Every line inside the same block must use the exact same number of leading spaces.
+
+<SyntaxBox
+  label="Indentation Pattern"
+  syntax={`if condition:
+    # Indented by 4 spaces (inside the block)
+    print("Runs when condition is true")`}
+  note="Never mix inconsistent numbers of spaces inside the same code block."
+/>
+
+<CodeExample
+  title="Correct indentation in action"
+  description="The indented print() belongs inside the if statement."
+  code={`if 8 > 3:
+    print("8 is greater than 3")
+    print("Both lines share 4 leading spaces")`}
+  expectedOutput={`8 is greater than 3
+Both lines share 4 leading spaces`}
+/>
+
+<CommonMistake
+  title="Missing or uneven indentation"
+  explanation="Forgetting to indent the line after a colon (:) raises an IndentationError. Using 2 spaces on one line and 4 spaces on the next line in the same block also causes an error."
+  wrongCode={`if 5 > 2:
+print("Five is greater than two")`}
+  correctCode={`if 5 > 2:
+    print("Five is greater than two")`}
+/>
+
+## Comments
+
+**Comments** are notes you write for human readers. Python completely ignores comments when running your program.
+
+Use comments to explain *why* your code does something or to temporarily disable a line while testing.
+
+### Single-Line Comments
+
+Start a single-line comment with the hash symbol `#`. Anything after `#` on that line is ignored.
+
+### Multi-Line Notes
+
+Python does not have a dedicated multi-line comment symbol, so programmers either put `#` at the start of each line or place an unassigned triple-quoted string `"""..."""` on its own lines.
+
+<CodeExample
+  title="Writing comments in Python"
+  description="Only the print() lines produce output; all comments are skipped."
+  code={`# This comment explains the line below
+print("Hello from Python!")  # Inline comment after code
+
+# Multi-line explanation:
+# Line 1 of comment
+# Line 2 of comment
+print("Comments do not appear in output.")`}
+  expectedOutput={`Hello from Python!
+Comments do not appear in output.`}
+/>
+
+## Understanding `print()` and Your First Program
+
+The built-in `print()` function displays messages or calculation results on the screen. Everything inside the parentheses `(` and `)` is sent to the output area.
+
+<CommonMistake
+  title="Using uppercase Print instead of lowercase print"
+  explanation="Python is case-sensitive. The built-in function is spelled all lowercase: print()."
+  wrongCode={`Print("Hello, World!")`}
+  correctCode={`print("Hello, World!")`}
+/>
+
+## Quick Check
+
+<QuickPractice
+  id="ch2-q1"
+  chapterSlug="python-syntax"
+  question="Which symbol starts a single-line comment in Python?"
+  options={["//", "#", "/*", "--"]}
+  correctIndex={1}
+  explanation="Python uses the hash symbol (#) for single-line comments. Everything after # on that line is ignored by Python."
+/>
+
+## Chapter Summary
+
+- Syntax is Python's rulebook for spelling, punctuation, and spacing.
+- Indentation (usually 4 spaces) defines blocks of code in Python.
+- Comments begin with `#` and help explain code to humans without affecting execution.
+- Python is case-sensitive: `print()` must be written in lowercase.
+

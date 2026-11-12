@@ -1,0 +1,101 @@
+---
+title: "Introduction to Python"
+chapter: 1
+---
+
+<LearningObjectives
+  items={[
+    "Explain what Python is and why it is a high-level programming language.",
+    "Identify Guido van Rossum as Python's creator and 1991 as its release year.",
+    "List key features that make Python friendly for beginners.",
+    "Recognize real-world fields where Python is used every day."
+  ]}
+/>
+
+## What Is Python?
+
+Python is a popular, high-level, general-purpose programming language. You write instructions in clean, readable English-like words, and Python runs them step by step.
+
+Unlike languages filled with heavy punctuation such as curly braces `{}` and semicolons `;`, Python focuses on simplicity. That makes it one of the best first programming languages for school students and new developers.
+
+<CodeExample
+  title="Your first glimpse of Python"
+  description="Notice how readable a short Python program looks."
+  code={`print("Welcome to Python!")
+print("2 + 3 =", 2 + 3)`}
+  expectedOutput={`Welcome to Python!
+2 + 3 = 5`}
+/>
+
+## Who Created Python and When?
+
+Python was created by **Guido van Rossum**, a Dutch programmer, in the late 1980s and was first released in **1991**.
+
+Fun fact: Guido did not name the language after the snake. He named it after *Monty Python's Flying Circus*, a British comedy show he enjoyed!
+
+## Why Is Python So Popular?
+
+Python consistently ranks among the most widely used programming languages in the world because it removes unnecessary hurdles for learners:
+
+- **Easy to read:** Python code looks close to plain English.
+- **Fewer lines of code:** Tasks that take ten lines in some languages often take two or three in Python.
+- **Works everywhere:** Python runs on Windows, macOS, Linux, and even inside web browsers via WebAssembly.
+- **Huge library support:** Python includes a rich standard library plus thousands of community packages.
+
+## Features and Advantages
+
+Here are the main strengths you will benefit from as you learn:
+
+1. **Beginner-friendly syntax** — Easy to learn and remember.
+2. **Interpreted execution** — Python runs line by line, so you can test ideas quickly and see clear error messages.
+3. **Dynamically typed** — You do not have to declare variable types manually before using them.
+4. **Free and open source** — Anyone can download, use, and share Python at no cost.
+
+<CodeExample
+  title="Simple math and messages together"
+  description="Python handles calculations and text in just a few lines."
+  code={`name = "Python"
+year_created = 1991
+print(name, "was first released in", year_created)`}
+  expectedOutput={`Python was first released in 1991`}
+/>
+
+## What Is Python Used For?
+
+Because Python is a general-purpose language, it powers many real-world applications:
+
+- **Web development:** Building websites and web backends.
+- **Data analysis and science:** Analyzing numbers, charts, and scientific research.
+- **Artificial intelligence and machine learning:** Training smart recommendation and language systems.
+- **Automation and scripting:** Automating repetitive file, spreadsheet, and classroom tasks.
+- **Education:** Teaching programming fundamentals in schools and universities worldwide.
+
+<CommonMistake
+  title="Expecting quotes around everything or forgetting them around text"
+  explanation="Text in Python must always be wrapped in quotes, while numbers like 1991 do not need quotes. Forgetting quotes around plain text causes Python to look for a variable with that name."
+  wrongCode={`print(Welcome to Python)`}
+  correctCode={`print("Welcome to Python")`}
+/>
+
+## Quick Check
+
+<QuickPractice
+  id="ch1-q1"
+  chapterSlug="introduction-to-python"
+  question="Who created the Python programming language, and in which year was it first released?"
+  options={[
+    "James Gosling in 1995",
+    "Guido van Rossum in 1991",
+    "Brendan Eich in 1995",
+    "Dennis Ritchie in 1972"
+  ]}
+  correctIndex={1}
+  explanation="Guido van Rossum created Python and released its first public version in 1991."
+/>
+
+## Chapter Summary
+
+- Python is a high-level programming language designed for clarity and readability.
+- It was created by Guido van Rossum and released in 1991.
+- Python is popular in education, web development, data science, AI, and automation.
+

@@ -1,0 +1,116 @@
+---
+title: "Python Data Types"
+chapter: 5
+---
+
+<LearningObjectives
+  items={[
+    "Understand why programming languages categorize data into types.",
+    "Work with Python's four foundational scalar types: str, int, float, and bool.",
+    "Inspect any value or variable's type using type().",
+    "Convert values between data types safely using int(), float(), str(), and bool()."
+  ]}
+/>
+
+## What Are Data Types?
+
+In programming, a **data type** tells Python what kind of information a value represents and what operations are allowed on it. For example, you can multiply two numbers, while adding two strings joins text together.
+
+For Python fundamentals, these four built-in types are essential:
+
+| Type | Name | Example | Description |
+|---|---|---|---|
+| `str` | String | `"Hello"` | Text inside quotes |
+| `int` | Integer | `42`, `-7` | Whole numbers without decimals |
+| `float` | Float | `3.14`, `-0.5` | Numbers with a decimal point |
+| `bool` | Boolean | `True`, `False` | Logical truth values |
+
+## Checking Types with `type()`
+
+Whenever you are unsure what type a variable holds, pass it to the built-in `type()` function.
+
+<CodeExample
+  title="Using type() on core Python data types"
+  description="Each built-in value reports its exact class name."
+  code={`name = "Python"
+lessons = 9
+rating = 4.9
+is_beginner_friendly = True
+
+print(type(name))
+print(type(lessons))
+print(type(rating))
+print(type(is_beginner_friendly))`}
+  expectedOutput={`<class 'str'>
+<class 'int'>
+<class 'float'>
+<class 'bool'>`}
+/>
+
+## Mixing Types Carefully
+
+Notice how quotes change the data type completely! `"25"` (with quotes) is a **string**, whereas `25` (without quotes) is an **integer**.
+
+- `"25" + "5"` joins two strings into `"255"`.
+- `25 + 5` adds two integers into `30`.
+- `"25" + 5` causes a `TypeError` because Python will not guess whether you want text joining or math addition.
+
+<CommonMistake
+  title="Trying to add a string and a number with +"
+  explanation="Using + between a string and an int raises a TypeError. Convert the number using str() or pass comma-separated values to print()."
+  wrongCode={`age = 15
+print("Age: " + age)`}
+  correctCode={`age = 15
+print("Age: " + str(age))`}
+/>
+
+## Type Conversion (Casting)
+
+When you need to change a value from one type to another, Python provides built-in conversion functions:
+
+- `int(x)` — Converts a whole-number string or truncates a float into an integer.
+- `float(x)` — Converts an integer or numeric string into a decimal number.
+- `str(x)` — Converts numbers or booleans into text strings.
+- `bool(x)` — Converts a value into `True` or `False`.
+
+<CodeExample
+  title="Converting between str, int, and float"
+  description="Type conversion lets you do math on text digits or combine numbers with text."
+  code={`text_num = "18"
+whole = int(text_num)
+decimal = float(whole)
+
+print(whole + 2)
+print(decimal)
+print("Value is " + str(whole))`}
+  expectedOutput={`20
+18.0
+Value is 18`}
+/>
+
+<LessonNote title="Float to int truncation">
+Calling <code>int(4.9)</code> does not round up—it removes everything after the decimal point and returns <code>4</code>. Converting non-numeric text like <code>int("abc")</code> raises a <code>ValueError</code>.
+</LessonNote>
+
+## Quick Check
+
+<QuickPractice
+  id="ch5-q1"
+  chapterSlug="python-data-types"
+  question="What will type(7.0) output in Python?"
+  options={[
+    "<class 'int'>",
+    "<class 'float'>",
+    "<class 'str'>",
+    "<class 'bool'>"
+  ]}
+  correctIndex={1}
+  explanation="Even though .0 represents zero decimal fraction, any number written with a decimal point in Python has type float."
+/>
+
+## Chapter Summary
+
+- Python's core beginner data types are `str` (text), `int` (whole numbers), `float` (decimal numbers), and `bool` (True/False).
+- Use `type(value)` to check any value's data type.
+- Use `int()`, `float()`, `str()`, and `bool()` to convert between types explicitly.
+

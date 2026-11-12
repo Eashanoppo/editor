@@ -1,0 +1,107 @@
+---
+title: "Python Booleans"
+chapter: 8
+---
+
+<LearningObjectives
+  items={[
+    "Understand Python's two boolean values: True and False.",
+    "Evaluate comparison expressions that produce boolean results.",
+    "Use bool() to check how Python treats values as truthy or falsy.",
+    "Avoid common capitalization mistakes with boolean literals."
+  ]}
+/>
+
+## What Are Booleans?
+
+In programming, programs constantly make yes-or-no decisions: Is the score high enough to pass? Are two passwords equal? Is a cart empty?
+
+Python represents these yes/no states using the **boolean** (`bool`) type, which has only two possible values:
+
+- `True`
+- `False`
+
+Notice that both `True` and `False` start with an **uppercase** letter and do **not** have quotes around them.
+
+<CodeExample
+  title="Creating boolean variables"
+  description="Booleans hold True or False directly without quotes."
+  code={`is_logged_in = True
+has_errors = False
+
+print(is_logged_in, type(is_logged_in))
+print(has_errors, type(has_errors))`}
+  expectedOutput={`True <class 'bool'>
+False <class 'bool'>`}
+/>
+
+<CommonMistake
+  title="Using lowercase true/false or putting quotes around True"
+  explanation="Python requires capitalized True and False. Writing true raises a NameError, while 'True' in quotes creates a string instead of a boolean."
+  wrongCode={`is_ready = true
+status = "False"`}
+  correctCode={`is_ready = True
+status = False`}
+/>
+
+## Boolean Comparisons
+
+Whenever you compare two values—such as checking if one number is greater than another—Python evaluates the comparison and gives you back a boolean (`True` or `False`).
+
+<CodeExample
+  title="Comparing numbers and text"
+  description="Each comparison produces True or False."
+  code={`print(10 > 5)
+print(10 == 5)
+print(4 <= 4)
+print("apple" == "orange")`}
+  expectedOutput={`True
+False
+True
+False`}
+/>
+
+## Evaluating Values with `bool()`
+
+You can pass any value into the `bool()` function to see whether Python treats it as `True` (**truthy**) or `False` (**falsy**).
+
+Almost every non-empty value is `True`. Only a small set of "empty" or zero values evaluate to `False`:
+
+- `False`
+- `None`
+- `0` and `0.0`
+- Empty strings `""`
+- Empty collections (`[]`, `{}`, `()`)
+
+<CodeExample
+  title="Testing truthy and falsy values"
+  description="Non-zero numbers and non-empty strings evaluate to True."
+  code={`print("bool('Python'):", bool("Python"))
+print("bool(15):", bool(15))
+print("bool(''):", bool(""))
+print("bool(0):", bool(0))
+print("bool(None):", bool(None))`}
+  expectedOutput={`bool('Python'): True
+bool(15): True
+bool(''): False
+bool(0): False
+bool(None): False`}
+/>
+
+## Quick Check
+
+<QuickPractice
+  id="ch8-q1"
+  chapterSlug="python-booleans"
+  question="What will bool('') print in Python?"
+  options={["True", "False", "None", "Error"]}
+  correctIndex={1}
+  explanation="An empty string '' has zero characters, so Python evaluates bool('') as False."
+/>
+
+## Chapter Summary
+
+- Booleans represent truth values: `True` and `False` (always capitalized, no quotes).
+- Comparisons such as `10 > 5` or `x == y` return a boolean value.
+- `bool()` converts values to `True` unless they are zero, `None`, `False`, or empty.
+

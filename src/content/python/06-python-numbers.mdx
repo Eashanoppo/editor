@@ -1,0 +1,142 @@
+---
+title: "Python Numbers"
+chapter: 6
+---
+
+<LearningObjectives
+  items={[
+    "Distinguish between Python's three numeric types: int, float, and complex.",
+    "Write very large or small floats using scientific notation.",
+    "Convert between numeric types using int(), float(), and complex().",
+    "Generate random numbers with Python's built-in random module."
+  ]}
+/>
+
+## Three Numeric Types in Python
+
+Python has three built-in numeric types:
+
+- `int` — Whole numbers, positive or negative, with no decimal point and unlimited length.
+- `float` — Floating-point numbers containing one or more decimals (including scientific notation).
+- `complex` — Numbers written with a `j` as the imaginary part (mostly used in engineering and higher math).
+
+<CodeExample
+  title="Inspecting int, float, and complex numbers"
+  description="Python identifies each numeric type automatically based on how you write it."
+  code={`x = 25
+y = -3.5
+z = 4 + 2j
+
+print(x, type(x))
+print(y, type(y))
+print(z, type(z))`}
+  expectedOutput={`25 <class 'int'>
+-3.5 <class 'float'>
+(4+2j) <class 'complex'>`}
+/>
+
+## Integers (`int`)
+
+An integer (`int`) is any whole number without decimals—positive, negative, or zero. Python integers can be arbitrarily large!
+
+<CodeExample
+  title="Working with integers"
+  description="Positive, negative, and huge whole numbers are all valid integers."
+  code={`score = 100
+temperature = -12
+population = 8000000000
+
+print(score, temperature, population)`}
+  expectedOutput={`100 -12 8000000000`}
+/>
+
+## Floating-Point Numbers (`float`)
+
+A `float` represents real numbers with a decimal point. You can also write floats using scientific notation with `e` or `E` to indicate powers of 10 (for instance, `2.5e3` means `2.5 × 1000 = 2500.0`).
+
+<CodeExample
+  title="Standard and scientific floats"
+  description="Scientific notation uses e or E to multiply by powers of 10."
+  code={`price = 19.99
+tiny = -0.005
+big_float = 3.5e4
+
+print(price, tiny, big_float)
+print(type(big_float))`}
+  expectedOutput={`19.99 -0.005 35000.0
+<class 'float'>`}
+/>
+
+## Complex Numbers (Basic Introduction)
+
+In Python, complex numbers combine a real part and an imaginary part marked with the letter `j` (not `i`). While beginners mainly use `int` and `float`, knowing `complex` exists prevents confusion when you see `j` in math libraries.
+
+## Numeric Type Conversion
+
+You can convert integers and floats between types using `int()`, `float()`, and `complex()`. Note that you **cannot** convert a complex number directly into an `int` or `float`.
+
+<CodeExample
+  title="Converting between numeric types"
+  description="int() drops the decimal fraction, while float() adds .0 to whole numbers."
+  code={`a = 10
+b = 4.8
+
+a_float = float(a)
+b_int = int(b)
+a_complex = complex(a)
+
+print(a_float)
+print(b_int)
+print(a_complex)`}
+  expectedOutput={`10.0
+4
+(10+0j)`}
+/>
+
+<CommonMistake
+  title="Trying to convert a complex number to int or float"
+  explanation="Complex numbers contain an imaginary component, so Python raises a TypeError if you pass a complex number to int() or float()."
+  wrongCode={`z = 3 + 4j
+print(int(z))`}
+  correctCode={`z = 3 + 4j
+print(int(z.real))`}
+/>
+
+## Random Numbers (Basic Introduction)
+
+Python includes a built-in `random` module for generating unpredictable numbers—useful in games, quizzes, and simulations.
+
+Use `import random` at the top of your file, then call `random.randint(start, end)` to get a random integer between `start` and `end` (inclusive).
+
+<CodeExample
+  title="Generating random numbers"
+  description="random.seed(42) makes this demo reproducible; remove seed() for fresh rolls each run."
+  code={`import random
+
+random.seed(42)
+dice_roll = random.randint(1, 6)
+lucky_num = random.randrange(10, 50, 5)
+
+print("Dice roll:", dice_roll)
+print("Random multiple of 5:", lucky_num)`}
+  expectedOutput={`Dice roll: 6
+Random multiple of 5: 15`}
+/>
+
+## Quick Check
+
+<QuickPractice
+  id="ch6-q1"
+  chapterSlug="python-numbers"
+  question="What is the result of int(8.95) in Python?"
+  options={["9", "8.95", "8", "Error"]}
+  correctIndex={2}
+  explanation="int() truncates toward zero instead of rounding, so int(8.95) removes .95 and returns 8."
+/>
+
+## Chapter Summary
+
+- Python supports `int` (whole numbers), `float` (decimal or scientific numbers), and `complex` (with `j`).
+- `int()`, `float()`, and `complex()` convert between compatible numeric types.
+- `import random` unlocks functions like `random.randint(a, b)` for beginner games and experiments.
+

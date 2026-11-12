@@ -1,0 +1,315 @@
+---
+title: "Python Operators"
+chapter: 9
+---
+
+<LearningObjectives
+  items={[
+    "Perform math with all seven Arithmetic operators including //, %, and **.",
+    "Update variables concisely using Assignment operators.",
+    "Compare values with Comparison operators and combine conditions using Logical operators.",
+    "Explain the difference between == (equality) and is (identity).",
+    "Check membership with in / not in and understand introductory Bitwise operators."
+  ]}
+/>
+
+## What Are Operators?
+
+**Operators** are special symbols or keywords in Python that perform calculations, assign values, compare data, or combine conditions.
+
+Python organizes operators into seven groups:
+
+1. **Arithmetic** (`+`, `-`, `*`, `/`, `%`, `**`, `//`)
+2. **Assignment** (`=`, `+=`, `-=`, `*=`, `/=`, `%=`, `//=`, `**=`)
+3. **Comparison** (`==`, `!=`, `>`, `<`, `>=`, `<=`)
+4. **Logical** (`and`, `or`, `not`)
+5. **Identity** (`is`, `is not`)
+6. **Membership** (`in`, `not in`)
+7. **Bitwise** (`&`, `|`, `^`, `~`, `<<`, `>>`)
+
+---
+
+## 1. Arithmetic Operators
+
+Arithmetic operators perform basic mathematical calculations on numbers.
+
+| Symbol | Official Name | Purpose | Syntax |
+|---|---|---|---|
+| `+` | Addition | Adds two values | `x + y` |
+| `-` | Subtraction | Subtracts right value from left | `x - y` |
+| `*` | Multiplication | Multiplies two values | `x * y` |
+| `/` | Division | Divides and always returns a `float` | `x / y` |
+| `%` | Modulus | Returns the remainder after division | `x % y` |
+| `**` | Exponentiation | Raises left number to the power of right | `x ** y` |
+| `//` | Floor Division | Divides and rounds down to a whole number | `x // y` |
+
+<CodeExample
+  title="All seven arithmetic operators"
+  description="Pay special attention to /, //, %, and **."
+  code={`a = 17
+b = 5
+
+print("Addition (+):", a + b)
+print("Subtraction (-):", a - b)
+print("Multiplication (*):", a * b)
+print("Division (/):", a / b)
+print("Modulus (%):", a % b)
+print("Exponentiation (**):", 2 ** 4)
+print("Floor division (//):", a // b)`}
+  expectedOutput={`Addition (+): 22
+Subtraction (-): 12
+Multiplication (*): 85
+Division (/): 3.4
+Modulus (%): 2
+Exponentiation (**): 16
+Floor division (//): 3`}
+/>
+
+<LessonNote title="Regular division (/) vs. Floor division (//)">
+In Python 3, <code>10 / 2</code> returns <code>5.0</code> (a float), whereas <code>10 // 2</code> returns <code>5</code> (an int) and <code>17 // 5</code> drops the decimal remainder to return <code>3</code>.
+</LessonNote>
+
+---
+
+## 2. Assignment Operators
+
+Assignment operators store or update values inside variables. Compound assignment operators like `+=` save typing when modifying an existing variable.
+
+| Symbol | Official Name | Purpose | Equivalent To |
+|---|---|---|---|
+| `=` | Simple Assignment | Stores value in variable | `x = 5` |
+| `+=` | Addition Assignment | Adds and updates variable | `x = x + 3` |
+| `-=` | Subtraction Assignment | Subtracts and updates variable | `x = x - 3` |
+| `*=` | Multiplication Assignment | Multiplies and updates variable | `x = x * 3` |
+| `/=` | Division Assignment | Divides and updates variable | `x = x / 3` |
+| `%=` | Modulus Assignment | Keeps remainder in variable | `x = x % 3` |
+| `//=` | Floor Division Assignment | Floor-divides and updates variable | `x = x // 3` |
+| `**=` | Exponent Assignment | Raises to power and updates variable | `x = x ** 3` |
+
+*(Bitwise compound assignments `&=`, `|=`, `^=`, `>>=`, `<<=` also exist for binary operations.)*
+
+<CodeExample
+  title="Updating variables with assignment operators"
+  description="Each line modifies total using its previous value."
+  code={`total = 10
+total += 5     # 10 + 5 = 15
+print("After += 5:", total)
+
+total -= 3     # 15 - 3 = 12
+print("After -= 3:", total)
+
+total *= 2     # 12 * 2 = 24
+print("After *= 2:", total)
+
+total /= 4     # 24 / 4 = 6.0
+print("After /= 4:", total)
+
+n = 17
+n %= 5         # remainder of 17 / 5 = 2
+print("After %= 5:", n)
+
+p = 17
+p //= 5        # floor division = 3
+print("After //= 5:", p)
+
+p **= 3        # 3 ** 3 = 27
+print("After **= 3:", p)`}
+  expectedOutput={`After += 5: 15
+After -= 3: 12
+After *= 2: 24
+After /= 4: 6.0
+After %= 5: 2
+After //= 5: 3
+After **= 3: 27`}
+/>
+
+---
+
+## 3. Comparison Operators
+
+Comparison operators compare two values and always return a boolean (`True` or `False`).
+
+| Symbol | Official Name | Purpose | Syntax |
+|---|---|---|---|
+| `==` | Equal | Checks if two values are equal | `x == y` |
+| `!=` | Not Equal | Checks if two values are different | `x != y` |
+| `>` | Greater Than | Checks if left is larger | `x > y` |
+| `<` | Less Than | Checks if left is smaller | `x < y` |
+| `>=` | Greater Than or Equal To | Checks if left is larger or equal | `x >= y` |
+| `<=` | Less Than or Equal To | Checks if left is smaller or equal | `x <= y` |
+
+<CodeExample
+  title="Testing all six comparison operators"
+  description="Each comparison evaluates to True or False."
+  code={`x = 10
+y = 7
+
+print("x == y:", x == y)
+print("x != y:", x != y)
+print("x > y:", x > y)
+print("x < y:", x < y)
+print("x >= 10:", x >= 10)
+print("y <= 6:", y <= 6)`}
+  expectedOutput={`x == y: False
+x != y: True
+x > y: True
+x < y: False
+x >= 10: True
+y <= 6: False`}
+/>
+
+<CommonMistake
+  title="Confusing = (assignment) with == (comparison)"
+  explanation="A single equals sign (=) stores a value in a variable. A double equals sign (==) compares two values to check if they match."
+  wrongCode={`score = 10
+# Trying to compare with single = causes a SyntaxError:
+# if score = 10:
+#     print("Perfect!")`}
+  correctCode={`score = 10
+if score == 10:
+    print("Perfect!")`}
+/>
+
+---
+
+## 4. Logical Operators
+
+Logical operators combine or reverse boolean conditions.
+
+| Symbol | Official Name | Purpose | Syntax |
+|---|---|---|---|
+| `and` | Logical AND | `True` only when **both** conditions are true | `cond1 and cond2` |
+| `or` | Logical OR | `True` when **at least one** condition is true | `cond1 or cond2` |
+| `not` | Logical NOT | Reverses `True` to `False` and `False` to `True` | `not cond` |
+
+<CodeExample
+  title="Combining conditions with and, or, not"
+  description="Logical operators help express multi-part rules cleanly."
+  code={`age = 16
+has_ticket = True
+
+print("and:", age >= 13 and has_ticket)
+print("or:", age >= 18 or has_ticket)
+print("not:", not has_ticket)`}
+  expectedOutput={`and: True
+or: True
+not: False`}
+/>
+
+---
+
+## 5. Identity Operators (`is` vs `==`)
+
+Identity operators check whether two variables point to the **exact same object in memory**, rather than simply having equal contents.
+
+| Symbol | Official Name | Purpose | Syntax |
+|---|---|---|---|
+| `is` | Identity | `True` if both variables refer to the exact same object | `x is y` |
+| `is not` | Negated Identity | `True` if they refer to different objects | `x is not y` |
+
+### Crucial Distinction: `==` versus `is`
+
+- Use **`==`** to check if two values are **equal** (for example: comparing numbers or strings).
+- Use **`is`** mainly to check if a value is **`None`** (e.g., `result is None`), or when checking exact object identity.
+
+Two separate lists can contain identical items (`a == b` is `True`), yet still be two separate objects in memory (`a is b` is `False`)!
+
+<CodeExample
+  title="Comparing == vs. is"
+  description="a and b have equal contents, whereas c points to the exact same list object as a."
+  code={`a = [1, 2, 3]
+b = [1, 2, 3]
+c = a
+
+print("a == b (same value):", a == b)
+print("a is b (same object):", a is b)
+print("a is c (same object):", a is c)
+print("a is not b:", a is not b)`}
+  expectedOutput={`a == b (same value): True
+a is b (same object): False
+a is c (same object): True
+a is not b: True`}
+/>
+
+---
+
+## 6. Membership Operators
+
+Membership operators check whether a substring or element exists inside a sequence (such as a string or list).
+
+| Symbol | Official Name | Purpose | Syntax |
+|---|---|---|---|
+| `in` | Membership | `True` if value is found in the sequence | `item in sequence` |
+| `not in` | Negated Membership | `True` if value is NOT found in the sequence | `item not in sequence` |
+
+<CodeExample
+  title="Checking membership with in and not in"
+  description="Membership checks are case-sensitive in strings."
+  code={`course = "Learn Python Basics"
+
+print("'Python' in course:", "Python" in course)
+print("'Java' not in course:", "Java" not in course)
+print("'python' in course:", "python" in course)`}
+  expectedOutput={`'Python' in course: True
+'Java' not in course: True
+'python' in course: False`}
+/>
+
+---
+
+## 7. Bitwise Operators
+
+Bitwise operators work on integers at the **binary (0 and 1 bit)** level.
+
+| Symbol | Official Name | Purpose | Syntax |
+|---|---|---|---|
+| `&` | Bitwise AND | Sets each bit to `1` if both bits are `1` | `x & y` |
+| `|` | Bitwise OR | Sets each bit to `1` if at least one bit is `1` | `x | y` |
+| `^` | Bitwise XOR | Sets each bit to `1` if only one of the two bits is `1` | `x ^ y` |
+| `~` | Bitwise NOT | Inverts all bits (`~x` equals `-(x + 1)`) | `~x` |
+| `<<` | Left Shift | Shifts bits left, multiplying by 2 per step | `x << n` |
+| `>>` | Right Shift | Shifts bits right, floor-dividing by 2 per step | `x >> n` |
+
+For example, in binary: `6` is `0110` and `3` is `0011`.
+
+<CodeExample
+  title="All six bitwise operators on 6 (0110) and 3 (0011)"
+  description="Observe how binary bit operations produce integer results."
+  code={`a = 6   # binary 0110
+b = 3   # binary 0011
+
+print("a & b (AND):", a & b)     # 0010 -> 2
+print("a | b (OR):", a | b)      # 0111 -> 7
+print("a ^ b (XOR):", a ^ b)     # 0101 -> 5
+print("~a (NOT):", ~a)           # -(6 + 1) -> -7
+print("a << 1 (Left shift):", a << 1)   # 1100 -> 12
+print("a >> 1 (Right shift):", a >> 1)  # 0011 -> 3`}
+  expectedOutput={`a & b (AND): 2
+a | b (OR): 7
+a ^ b (XOR): 5
+~a (NOT): -7
+a << 1 (Left shift): 12
+a >> 1 (Right shift): 3`}
+/>
+
+## Quick Check
+
+<QuickPractice
+  id="ch9-q1"
+  chapterSlug="python-operators"
+  question="What is the output of 15 // 4 + 15 % 4?"
+  code={`print(15 // 4 + 15 % 4)`}
+  options={["3", "6", "6.75", "7"]}
+  correctIndex={1}
+  explanation="15 // 4 gives the whole quotient 3, and 15 % 4 gives the remainder 3. Adding them gives 3 + 3 = 6."
+/>
+
+## Chapter Summary
+
+- **Arithmetic** (`+`, `-`, `*`, `/`, `%`, `**`, `//`) computes numeric values.
+- **Assignment** (`=`, `+=`, `-=`, etc.) stores and updates variable values.
+- **Comparison** (`==`, `!=`, `>`, `<`, `>=`, `<=`) and **Logical** (`and`, `or`, `not`) evaluate conditions to `True` or `False`.
+- **Identity** (`is`, `is not`) tests object identity, whereas `==` tests value equality.
+- **Membership** (`in`, `not in`) checks whether an element appears in a sequence.
+- **Bitwise** (`&`, `|`, `^`, `~`, `<<`, `>>`) operates directly on binary bits of integers.
+

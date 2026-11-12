@@ -1,0 +1,127 @@
+---
+title: "Python Strings"
+chapter: 7
+---
+
+<LearningObjectives
+  items={[
+    "Create single-line and multiline strings using quotes.",
+    "Understand how Python treats strings as indexed sequences of characters.",
+    "Measure the length of a string using len().",
+    "Format readable strings with variables using f-strings."
+  ]}
+/>
+
+## What Are Strings?
+
+A **string** (`str`) is a sequence of characters—letters, digits, spaces, or punctuation—wrapped inside quotation marks. You use strings whenever your program handles names, messages, sentences, or labels.
+
+## Assigning Strings and Multiline Strings
+
+You can assign a string using single quotes `'...'` or double quotes `"..."`. If your text spans multiple lines, wrap it in triple quotes `"""..."""` or `'''...'''`.
+
+<CodeExample
+  title="Single-line and multiline strings"
+  description="Triple quotes preserve line breaks exactly as written."
+  code={`greeting = "Hello, student!"
+language = 'Python'
+poem = """Line one
+Line two"""
+
+print(greeting)
+print(language)
+print(poem)`}
+  expectedOutput={`Hello, student!
+Python
+Line one
+Line two`}
+/>
+
+## Strings as Arrays (Basic Introduction)
+
+In Python, a string behaves like an ordered array (sequence) of single characters. Every character sits at a numbered position called an **index**, starting from **`0`** on the left!
+
+- Index `0` is the first character.
+- Index `1` is the second character.
+- Negative index `-1` gives the last character.
+
+<CodeExample
+  title="Accessing characters by index"
+  description="Remember that Python counts positions starting from 0, not 1."
+  code={`word = "Python"
+
+print("First:", word[0])
+print("Third:", word[2])
+print("Last:", word[-1])
+print("Slice [0:2]:", word[0:2])`}
+  expectedOutput={`First: P
+Third: t
+Last: n
+Slice [0:2]: Py`}
+/>
+
+## Measuring String Length with `len()`
+
+The built-in `len()` function returns the total number of characters in a string—including spaces and punctuation!
+
+<CodeExample
+  title="Counting characters with len()"
+  description="Spaces and exclamation marks also count toward string length."
+  code={`message = "Hi Python!"
+print("Length:", len(message))`}
+  expectedOutput={`Length: 10`}
+/>
+
+<CommonMistake
+  title="Accessing an index equal to len(text)"
+  explanation="Because indexing starts at 0, a 6-character word like 'Python' has valid indexes 0 through 5. Asking for word[6] raises an IndexError."
+  wrongCode={`word = "Python"
+print(word[6])`}
+  correctCode={`word = "Python"
+print(word[5])`}
+/>
+
+## Basic String Formatting
+
+When you want to insert variables cleanly inside a string, Python **f-strings** (formatted string literals) are the simplest modern way. Put the letter `f` right before the opening quote, and place variables inside curly braces `{}`.
+
+<SyntaxBox
+  label="f-string Syntax"
+  syntax={`f"Hello, {name}! You have {points} points."`}
+  note="You can also use expressions inside {}, such as {price * 2}."
+/>
+
+<CodeExample
+  title="Formatting strings with f-strings"
+  description="f-strings automatically convert numbers inside {} without needing str()."
+  code={`student = "Leo"
+chapter = 7
+score = 98
+
+summary = f"{student} finished Chapter {chapter} with {score}%."
+print(summary)
+print(f"Double score: {score * 2}")`}
+  expectedOutput={`Leo finished Chapter 7 with 98%.
+Double score: 196`}
+/>
+
+## Quick Check
+
+<QuickPractice
+  id="ch7-q1"
+  chapterSlug="python-strings"
+  question="What does text[1] return when text = 'Code'?"
+  code={`text = "Code"
+print(text[1])`}
+  options={["C", "o", "d", "Error"]}
+  correctIndex={1}
+  explanation="Python indexing starts at 0: text[0] is 'C', so text[1] is 'o'."
+/>
+
+## Chapter Summary
+
+- Strings store text inside `'...'`, `"..."`, or triple quotes `"""..."""`.
+- String characters are zero-indexed (`text[0]` is the first character; `text[-1]` is the last).
+- `len(text)` returns the total character count including spaces.
+- f-strings (`f"..."`) insert variables and expressions directly into text.
+

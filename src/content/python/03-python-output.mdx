@@ -1,0 +1,119 @@
+---
+title: "Python Output"
+chapter: 3
+---
+
+<LearningObjectives
+  items={[
+    "Display text and numbers using Python's print() function.",
+    "Print multiple values inside a single print() call.",
+    "Customize spacing between values using the sep parameter.",
+    "Control line endings using the end parameter."
+  ]}
+/>
+
+## The `print()` Function
+
+Whenever you want your program to show information on the screen, you call `print()`. Without `print()`, Python computes values silently in memory without showing them.
+
+<SyntaxBox
+  label="Basic Syntax"
+  syntax={`print(value1, value2, ..., sep=" ", end="\\n")`}
+  note="By default, print() separates multiple values with one space and ends with a new line."
+/>
+
+## Printing Text and Numbers
+
+- **Text (strings)** must be enclosed in single quotes `'...'` or double quotes `"..."`.
+- **Numbers** are written directly without quotes. You can also print math expressions directly!
+
+<CodeExample
+  title="Printing text, numbers, and calculations"
+  description="Strings use quotes; numbers and math expressions do not."
+  code={`print("Python Output Lesson")
+print(2026)
+print(15 + 25)`}
+  expectedOutput={`Python Output Lesson
+2026
+40`}
+/>
+
+<LessonNote title="Single vs. double quotes">
+Both <code>"Hello"</code> and <code>'Hello'</code> work identically in Python. Choose one style and stay consistent—or use double quotes when your text contains an apostrophe like <code>"It's sunny"</code>.
+</LessonNote>
+
+## Printing Multiple Values
+
+You can pass several values to `print()` separated by commas `,`. Python automatically inserts a single space between each value and converts numbers into printable text for you.
+
+<CodeExample
+  title="Combining text and numbers with commas"
+  description="Commas let you mix strings and numbers cleanly in one line."
+  code={`print("Score:", 95, "out of", 100)
+print("Total cost:", 3 * 12)`}
+  expectedOutput={`Score: 95 out of 100
+Total cost: 36`}
+/>
+
+## Custom Separators with `sep`
+
+By default, `print()` puts a space `" "` between comma-separated values. You can change that separator by passing `sep="..."` at the end of your `print()` call.
+
+<CodeExample
+  title="Formatting output with sep"
+  description="Use sep to join values with hyphens, slashes, or no space at all."
+  code={`print("2026", "11", "12", sep="-")
+print("Python", "is", "clear", sep=" | ")
+print("A", "B", "C", sep="")`}
+  expectedOutput={`2026-11-12
+Python | is | clear
+ABC`}
+/>
+
+## Controlling Line Endings with `end`
+
+Normally, every `print()` statement ends by moving to a new line (`\n`). If you want the next `print()` to continue on the **same line**, set `end="..."`.
+
+<CodeExample
+  title="Keeping output on the same line with end"
+  description="Setting end=' ' prints a space instead of starting a new line."
+  code={`print("Loading", end="... ")
+print("Ready!")
+print("Count:", end=" ")
+print(1, 2, 3, sep=", ")`}
+  expectedOutput={`Loading... Ready!
+Count: 1, 2, 3`}
+/>
+
+<CommonMistake
+  title="Placing sep or end before positional values"
+  explanation="Keyword options like sep and end must always appear after the values you want to print. Putting sep first raises a SyntaxError."
+  wrongCode={`print(sep="-", "2026", "11", "12")`}
+  correctCode={`print("2026", "11", "12", sep="-")`}
+/>
+
+## Quick Check
+
+<QuickPractice
+  id="ch3-q1"
+  chapterSlug="python-output"
+  question="What will this code print?"
+  code={`print("Hi", "there", sep="-", end="!")
+print("Welcome")`}
+  options={[
+    "Hi-there!\\nWelcome",
+    "Hi-there!Welcome",
+    "Hi there!Welcome",
+    "Hi-thereWelcome"
+  ]}
+  correctIndex={1}
+  explanation="sep='-' places a hyphen between 'Hi' and 'there'. end='!' replaces the newline with '!', so 'Welcome' prints immediately on the same line."
+/>
+
+## Chapter Summary
+
+- `print()` shows text, numbers, and expressions on the screen.
+- Passing comma-separated items prints them on one line with a space in between.
+- `sep="..."` changes the separator placed between items.
+- `end="..."` changes what appears at the end of the `print()` call instead of a newline.
+

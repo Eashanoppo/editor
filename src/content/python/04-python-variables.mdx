@@ -1,0 +1,136 @@
+---
+title: "Python Variables"
+chapter: 4
+---
+
+<LearningObjectives
+  items={[
+    "Create and update variables to store values in Python.",
+    "Apply Python's variable naming rules and readable snake_case style.",
+    "Assign multiple variables in one line.",
+    "Understand the basic difference between global and local variables."
+  ]}
+/>
+
+## What Are Variables?
+
+A **variable** is a named container that stores a value in memory so you can reuse or update it later in your program.
+
+Think of a variable like a labeled storage box: the label is the variable name, and whatever you put inside is the value.
+
+## Creating Variables
+
+In Python, you create a variable the moment you assign a value to it using a single equals sign `=`. You do **not** need a special command like `var` or `let`, and you do not have to state the type beforehand.
+
+<SyntaxBox
+  label="Variable Assignment"
+  syntax={`variable_name = value`}
+  note="Read '=' as 'is assigned' rather than 'is mathematically equal to'."
+/>
+
+<CodeExample
+  title="Creating, printing, and updating variables"
+  description="Variables can be reassigned to a new value—or even a different type—at any time."
+  code={`student_name = "Maya"
+score = 88
+print(student_name, "scored", score)
+
+score = 94
+print("Updated score:", score)`}
+  expectedOutput={`Maya scored 88
+Updated score: 94`}
+/>
+
+## Variable Naming Rules
+
+Python enforces strict rules for variable names:
+
+1. A variable name must start with a **letter** (`a-z`, `A-Z`) or an **underscore** (`_`).
+2. A variable name **cannot start with a number**.
+3. A variable name can only contain letters, numbers, and underscores (`A-z`, `0-9`, `_`).
+4. Variable names are **case-sensitive** (`age`, `Age`, and `AGE` are three different variables).
+5. You cannot use reserved Python keywords (such as `if`, `for`, `True`, `and`) as variable names.
+
+By Python convention, multi-word variable names use `snake_case` (all lowercase words separated by underscores), like `first_name` or `total_price`.
+
+<CommonMistake
+  title="Starting a variable name with a digit or using a hyphen"
+  explanation="Names like 2nd_score or total-cost are invalid in Python. Start with a letter or underscore, and use underscores instead of hyphens."
+  wrongCode={`2nd_score = 90
+total-cost = 50`}
+  correctCode={`second_score = 90
+total_cost = 50`}
+/>
+
+## Assigning Multiple Values
+
+Python lets you assign values to several variables on a single line, or assign the same value to multiple variables at once.
+
+<CodeExample
+  title="Multiple assignment shortcuts"
+  description="Assign distinct values using commas, or share one value using chained equals signs."
+  code={`x, y, z = "Red", "Green", "Blue"
+print(x, y, z)
+
+a = b = c = 100
+print(a, b, c)`}
+  expectedOutput={`Red Green Blue
+100 100 100`}
+/>
+
+## Understanding Variable Types
+
+Every value stored in a variable has a data type (such as text or an integer). You can check a variable's type anytime with `type()`, and you can reassign a variable to a new type if needed.
+
+<CodeExample
+  title="Checking variable values and types"
+  description="Python tracks the type of whatever value is currently stored in the variable."
+  code={`item = "Notebook"
+print(item, type(item))
+
+item = 5
+print(item, type(item))`}
+  expectedOutput={`Notebook <class 'str'>
+5 <class 'int'>`}
+/>
+
+## Global and Local Variables (Basic Introduction)
+
+Where you create a variable determines where in your program it can be used:
+
+- **Global variables** are created outside of any function and can be read anywhere in the file.
+- **Local variables** are created inside a function (a reusable named block defined with `def`) and exist only inside that function.
+
+<CodeExample
+  title="Global vs. local variable scope"
+  description="message_global works everywhere, while message_local only belongs inside greet()."
+  code={`course = "Python Basics"  # Global variable
+
+def show_info():
+    topic = "Variables"   # Local variable
+    print("Inside function:", course, "-", topic)
+
+show_info()
+print("Outside function:", course)`}
+  expectedOutput={`Inside function: Python Basics - Variables
+Outside function: Python Basics`}
+/>
+
+## Quick Check
+
+<QuickPractice
+  id="ch4-q1"
+  chapterSlug="python-variables"
+  question="Which of the following is a valid Python variable name?"
+  options={["1st_place", "first-place", "first_place", "True"]}
+  correctIndex={2}
+  explanation="first_place starts with a letter and only uses letters and an underscore. 1st_place starts with a digit, first-place uses a hyphen, and True is a reserved Python keyword."
+/>
+
+## Chapter Summary
+
+- Variables store values under descriptive names using `=`.
+- Names must start with a letter or `_` and cannot contain spaces or hyphens.
+- Python supports multiple assignments on one line (`x, y = 1, 2`).
+- Variables created outside functions are global; variables created inside functions are local to that function.
+
