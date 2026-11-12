@@ -21,7 +21,7 @@ export const FAQ_ITEMS: FaqItem[] = [
     id: "faq-exec",
     question: "Can I execute real Python code here?",
     answer:
-      "Yes. The Playground, lesson Run buttons, and quiz coding challenges execute genuine Python 3 inside your browser using Pyodide (WebAssembly) inside an isolated Web Worker. Because it runs in a browser worker rather than desktop Python, interactive terminal input() and desktop filesystem access are not supported.",
+      "Yes. The Playground, lesson Run buttons, and quiz coding challenges execute genuine Python 3 inside your browser using Pyodide (WebAssembly) inside an isolated Web Worker, including interactive input() prompts directly inside the output console. Desktop filesystem and native OS socket access remain sandboxed inside your browser.",
   },
   {
     id: "faq-storage",

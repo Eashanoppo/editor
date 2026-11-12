@@ -123,23 +123,29 @@ export function AppFooter() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-start justify-between gap-2 border-t border-border pt-6 text-xs text-ink-secondary sm:flex-row sm:items-center">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span>
+        <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 sm:flex-row sm:items-center">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <span className="text-sm text-ink-secondary">
               A project of{" "}
               <a
                 href="https://unleft.space"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-brand-accent hover:underline"
+                className="font-semibold text-brand-accent hover:underline"
               >
                 UNLEFT LLC
               </a>
             </span>
-            <span aria-hidden="true">·</span>
-            <span>All rights reserved to Golam Rasul</span>
+            <span aria-hidden="true" className="text-border-strong">
+              ·
+            </span>
+            <span className="text-sm sm:text-[15px] font-semibold text-ink">
+              All rights reserved to Golam Rasul
+            </span>
           </div>
-          <p>Progress is stored locally in your browser.</p>
+          <p className="text-xs text-ink-secondary">
+            Progress is stored locally in your browser.
+          </p>
         </div>
       </div>
     </footer>

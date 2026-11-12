@@ -10,6 +10,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { PythonCodeView } from "@/components/common/PythonCodeView";
+import { InteractiveTerminalInput } from "@/components/playground/InteractiveTerminalInput";
 import { PythonEditor } from "@/components/playground/PythonEditor";
 import { Button } from "@/components/ui/button";
 import { usePyodide } from "@/hooks/usePyodide";
@@ -29,7 +30,8 @@ export function QuestionCard({
   onAnswered,
   onNext,
 }: QuestionCardProps) {
-  const { runCode, runtimeState } = usePyodide();
+  const { runCode, runtimeState, streamingStdout, pendingInput, submitInput } =
+    usePyodide();
 
   // State for choice-based questions
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -303,6 +305,16 @@ export function QuestionCard({
               <span>Reset Starter</span>
             </Button>
           </div>
+
+          {runningCode && (streamingStdout || pendingInput) ? (
+            <div className="rounded-[8px] border border-border bg-surface-muted p-3.5">
+              <InteractiveTerminalInput
+                streamingStdout={streamingStdout}
+                pendingInput={pendingInput}
+                onSubmitInput={submitInput}
+              />
+            </div>
+          ) : null}
 
           {(challengeOutput || challengeError) && (
             <div className="rounded-[8px] border border-border bg-surface-muted p-3.5">

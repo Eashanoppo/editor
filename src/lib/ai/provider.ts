@@ -24,6 +24,7 @@ export interface AIProviderAdapter {
   streamChat(params: {
     messages: Array<{ role: ChatRole; content: string }>;
     chapterContext?: string;
+    apiKeyOverride?: string;
     signal?: AbortSignal;
   }): Promise<ProviderStreamResult>;
 }
@@ -34,16 +35,22 @@ export class GroqProviderAdapter implements AIProviderAdapter {
   async streamChat(params: {
     messages: Array<{ role: ChatRole; content: string }>;
     chapterContext?: string;
+    apiKeyOverride?: string;
     signal?: AbortSignal;
   }): Promise<ProviderStreamResult> {
     const config = getServerAIConfig();
-    if (!config.isConfigured) {
+    const overrideKey = params.apiKeyOverride?.trim() ?? "";
+    const effectiveApiKey = overrideKey || config.apiKey;
+    const isValidKey =
+      effectiveApiKey.length > 0 && effectiveApiKey !== "your_groq_api_key_here";
+
+    if (!isValidKey) {
       return {
         ok: false,
         status: 503,
         errorCode: "NOT_CONFIGURED",
         errorMessage:
-          "Groq API key is not configured on the server. Add GROQ_API_KEY to .env.local to use the AI Python Tutor.",
+          "Groq API key is missing. Enter your Groq API key in the AI Assistant settings above (or add GROQ_API_KEY to .env.local on the server).",
       };
     }
 
@@ -60,7 +67,7 @@ export class GroqProviderAdapter implements AIProviderAdapter {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${config.apiKey}`,
+          Authorization: `Bearer ${effectiveApiKey}`,
         },
         body: JSON.stringify({
           model: config.model,
@@ -100,8 +107,9 @@ export class GroqProviderAdapter implements AIProviderAdapter {
           ok: false,
           status: 401,
           errorCode: "NOT_CONFIGURED",
-          errorMessage:
-            "The server's Groq API key was rejected by Groq. Please verify GROQ_API_KEY in .env.local.",
+          errorMessage: overrideKey
+            ? "Your Groq API key was rejected by Groq. Please check your key in the API Key settings."
+            : "The server's Groq API key was rejected by Groq. Please verify GROQ_API_KEY in .env.local or enter your own key in the UI.",
         };
       }
 

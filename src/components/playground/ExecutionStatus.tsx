@@ -22,6 +22,18 @@ export function ExecutionStatus({
     );
   }
 
+  if (status === "waiting-input") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-warning-border bg-warning-bg px-2.5 py-0.5 text-xs font-medium text-warning">
+        <span
+          className="h-2 w-2 animate-pulse rounded-full bg-yellow-accent"
+          aria-hidden="true"
+        />
+        <span>Waiting for input...</span>
+      </span>
+    );
+  }
+
   if (status === "running") {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-border bg-brand-light px-2.5 py-0.5 text-xs font-medium text-brand-accent">

@@ -19,6 +19,7 @@ export interface ChatConversation {
 export interface AIProviderRequest {
   messages: Array<{ role: ChatRole; content: string }>;
   chapterContext?: string;
+  apiKey?: string;
 }
 
 export interface AIStreamCallbacks {

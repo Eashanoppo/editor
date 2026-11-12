@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ExternalLink, Loader2, Play, Square, Terminal } from "lucide-react";
 import { CopyButton } from "@/components/common/CopyButton";
+import { InteractiveTerminalInput } from "@/components/playground/InteractiveTerminalInput";
 import { usePyodide } from "@/hooks/usePyodide";
 import type { PythonExecutionResult } from "@/lib/pyodide/runner";
 
@@ -23,11 +24,13 @@ export function CodeExampleClient({
   expectedOutput,
   highlightedHtml,
 }: CodeExampleClientProps) {
-  const { runCode, cancelRun } = usePyodide();
+  const { runCode, cancelRun, streamingStdout, pendingInput, submitInput } =
+    usePyodide();
   const [isRunning, setIsRunning] = useState(false);
   const [liveResult, setLiveResult] = useState<PythonExecutionResult | null>(null);
 
   const handleRun = async () => {
+    setLiveResult(null);
     setIsRunning(true);
     const result = await runCode(code, 5000);
     setLiveResult(result);
@@ -130,10 +133,20 @@ export function CodeExampleClient({
           ) : null}
         </div>
       ) : isRunning ? (
-        <div className="flex items-center gap-2 border-t border-border bg-surface-muted px-4 py-3 text-xs text-ink-secondary">
-          <Loader2 className="h-3.5 w-3.5 animate-spin text-brand-accent" aria-hidden="true" />
-          <span>Running Python in browser worker...</span>
-        </div>
+        streamingStdout || pendingInput ? (
+          <div className="border-t border-border bg-surface-muted px-4 py-3">
+            <InteractiveTerminalInput
+              streamingStdout={streamingStdout}
+              pendingInput={pendingInput}
+              onSubmitInput={submitInput}
+            />
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 border-t border-border bg-surface-muted px-4 py-3 text-xs text-ink-secondary">
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-brand-accent" aria-hidden="true" />
+            <span>Running Python in browser worker...</span>
+          </div>
+        )
       ) : expectedOutput ? (
         <div className="border-t border-border bg-surface-muted px-4 py-3">
           <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-ink-secondary">

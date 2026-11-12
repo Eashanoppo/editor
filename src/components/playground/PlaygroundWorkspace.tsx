@@ -69,7 +69,15 @@ function PlaygroundWorkspaceInner({
   initialCode: string;
   initialExampleId: string;
 }) {
-  const { runtimeState, runtimeError, runCode, cancelRun } = usePyodide({
+  const {
+    runtimeState,
+    runtimeError,
+    streamingStdout,
+    pendingInput,
+    runCode,
+    submitInput,
+    cancelRun,
+  } = usePyodide({
     preloadOnMount: true,
   });
 
@@ -89,6 +97,7 @@ function PlaygroundWorkspaceInner({
 
   const handleRun = useCallback(async () => {
     if (isExecuting) return;
+    setResult(null);
     setIsExecuting(true);
     const execResult = await runCode(code, 5000);
     setResult(execResult);
@@ -129,6 +138,7 @@ function PlaygroundWorkspaceInner({
 
   const viewStatus: PlaygroundViewStatus = useMemo(() => {
     if (runtimeState === "loading") return "loading";
+    if (isExecuting && runtimeState === "waiting-input") return "waiting-input";
     if (isExecuting || runtimeState === "running") return "running";
     if (result?.status === "timeout") return "timeout";
     if (result?.status === "error" || runtimeState === "error") return "error";
@@ -200,6 +210,9 @@ function PlaygroundWorkspaceInner({
             status={viewStatus}
             result={result}
             runtimeError={runtimeError}
+            streamingStdout={isExecuting ? streamingStdout : ""}
+            pendingInput={isExecuting ? pendingInput : null}
+            onSubmitInput={submitInput}
             onClear={() => setResult(null)}
           />
         </div>

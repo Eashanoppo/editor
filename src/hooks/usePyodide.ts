@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   pyodideRunner,
+  type InteractiveExecutionState,
   type PyodideRuntimeState,
   type PythonExecutionResult,
 } from "@/lib/pyodide/runner";
@@ -14,18 +15,29 @@ export function usePyodide(options?: { preloadOnMount?: boolean }) {
   const [runtimeError, setRuntimeError] = useState<string | undefined>(
     () => pyodideRunner.getState().error
   );
+  const [interactive, setInteractive] = useState<InteractiveExecutionState>(
+    () => pyodideRunner.getInteractiveState()
+  );
 
   useEffect(() => {
-    const unsubscribe = pyodideRunner.subscribe((nextState, errMsg) => {
+    const unsubscribeStatus = pyodideRunner.subscribe((nextState, errMsg) => {
       setRuntimeState(nextState);
       setRuntimeError(errMsg);
     });
+    const unsubscribeInteractive = pyodideRunner.subscribeInteractive(
+      (nextInteractive) => {
+        setInteractive(nextInteractive);
+      }
+    );
 
     if (options?.preloadOnMount) {
       pyodideRunner.preload();
     }
 
-    return unsubscribe;
+    return () => {
+      unsubscribeStatus();
+      unsubscribeInteractive();
+    };
   }, [options?.preloadOnMount]);
 
   const runCode = useCallback(
@@ -34,6 +46,10 @@ export function usePyodide(options?: { preloadOnMount?: boolean }) {
     },
     []
   );
+
+  const submitInput = useCallback((value: string, eof = false) => {
+    pyodideRunner.submitInput(value, eof);
+  }, []);
 
   const cancelRun = useCallback(() => {
     pyodideRunner.cancel();
@@ -46,7 +62,10 @@ export function usePyodide(options?: { preloadOnMount?: boolean }) {
   return {
     runtimeState,
     runtimeError,
+    streamingStdout: interactive.streamingStdout,
+    pendingInput: interactive.pendingInput,
     runCode,
+    submitInput,
     cancelRun,
     preload,
   };

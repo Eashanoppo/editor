@@ -1,10 +1,10 @@
 export const AI_CONFIG = {
   providerName: "Groq",
   endpoint: "https://api.groq.com/openai/v1/chat/completions",
-  defaultModel: "llama-3.3-70b-versatile",
+  defaultModel: "openai/gpt-oss-120b",
   maxContextMessages: 16,
   maxMessageLength: 4000,
-  maxTokens: 1024,
+  maxTokens: 4096,
   temperature: 0.4,
 } as const;
 

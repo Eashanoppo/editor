@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ExternalLink, User } from "lucide-react";
+import { ExternalLink, Square, User, Volume2 } from "lucide-react";
 import { CopyButton } from "@/components/common/CopyButton";
 import { PythonCodeView } from "@/components/common/PythonCodeView";
 import { PythonLogoMark } from "@/components/common/PythonLogoMark";
@@ -13,9 +13,15 @@ import type { ChatMessageItem } from "@/types/assistant";
 export function ChatMessage({
   message,
   isStreaming = false,
+  isSpeaking = false,
+  voiceSupported = false,
+  onToggleSpeak,
 }: {
   message: ChatMessageItem;
   isStreaming?: boolean;
+  isSpeaking?: boolean;
+  voiceSupported?: boolean;
+  onToggleSpeak?: () => void;
 }) {
   const isUser = message.role === "user";
 
@@ -140,7 +146,31 @@ export function ChatMessage({
           </div>
 
           {!isStreaming && message.content ? (
-            <div className="mt-3 flex justify-end border-t border-border pt-2">
+            <div className="mt-3 flex flex-wrap items-center justify-end gap-2 border-t border-border pt-2">
+              {voiceSupported && onToggleSpeak ? (
+                <button
+                  type="button"
+                  onClick={onToggleSpeak}
+                  aria-label={isSpeaking ? "Stop voice playback" : "Listen to answer"}
+                  className={`inline-flex h-7 items-center gap-1.5 rounded-[6px] border px-2.5 text-xs font-medium transition-colors cursor-pointer ${
+                    isSpeaking
+                      ? "border-brand bg-brand-light text-brand-accent"
+                      : "border-border bg-surface text-ink-secondary hover:bg-surface-secondary hover:text-ink"
+                  }`}
+                >
+                  {isSpeaking ? (
+                    <>
+                      <Square className="h-3 w-3" aria-hidden="true" />
+                      <span>Stop voice</span>
+                    </>
+                  ) : (
+                    <>
+                      <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span>Listen</span>
+                    </>
+                  )}
+                </button>
+              ) : null}
               <CopyButton text={message.content} label="Copy reply" />
             </div>
           ) : null}

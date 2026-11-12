@@ -67,6 +67,14 @@ export async function POST(request: Request) {
     );
   }
 
+  const headerApiKey = request.headers.get("x-groq-api-key")?.trim();
+  if (headerApiKey && (headerApiKey.length > 256 || !/^[\x21-\x7E]+$/.test(headerApiKey))) {
+    return Response.json(
+      { code: "INVALID_REQUEST", error: "Invalid Groq API key header format." },
+      { status: 400 }
+    );
+  }
+
   const chapterContext =
     parsed.data.chapterContext &&
     VALID_CHAPTER_SLUGS.has(parsed.data.chapterContext)
@@ -76,6 +84,7 @@ export async function POST(request: Request) {
   const result = await activeAIProvider.streamChat({
     messages: parsed.data.messages,
     chapterContext,
+    apiKeyOverride: headerApiKey || undefined,
     signal: request.signal,
   });
 

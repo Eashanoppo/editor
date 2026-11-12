@@ -2,13 +2,20 @@
 
 import React from "react";
 import { AlertTriangle, CheckCircle2, Eraser, Loader2, Terminal } from "lucide-react";
-import type { PythonExecutionResult } from "@/lib/pyodide/runner";
+import type {
+  PendingInputRequest,
+  PythonExecutionResult,
+} from "@/lib/pyodide/runner";
 import type { PlaygroundViewStatus } from "@/components/playground/ExecutionStatus";
+import { InteractiveTerminalInput } from "@/components/playground/InteractiveTerminalInput";
 
 interface OutputPanelProps {
   status: PlaygroundViewStatus;
   result: PythonExecutionResult | null;
   runtimeError?: string;
+  streamingStdout?: string;
+  pendingInput?: PendingInputRequest | null;
+  onSubmitInput?: (value: string, eof?: boolean) => void;
   onClear: () => void;
 }
 
@@ -16,9 +23,13 @@ export function OutputPanel({
   status,
   result,
   runtimeError,
+  streamingStdout = "",
+  pendingInput = null,
+  onSubmitInput,
   onClear,
 }: OutputPanelProps) {
-  const hasContent = Boolean(result || runtimeError);
+  const isBusy = status === "running" || status === "waiting-input";
+  const hasContent = Boolean(result || runtimeError || streamingStdout || pendingInput);
 
   return (
     <div className="flex h-full min-h-[320px] flex-col overflow-hidden rounded-[10px] border border-border bg-surface">
@@ -38,7 +49,7 @@ export function OutputPanel({
           <button
             type="button"
             onClick={onClear}
-            disabled={!hasContent}
+            disabled={!hasContent || isBusy}
             className="inline-flex h-7 items-center gap-1.5 rounded-[6px] border border-border bg-surface px-2.5 text-xs font-medium text-ink-secondary transition-colors hover:bg-surface-secondary hover:text-ink disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
           >
             <Eraser className="h-3 w-3" aria-hidden="true" />
@@ -68,11 +79,27 @@ export function OutputPanel({
               </p>
             </div>
           </div>
-        ) : status === "running" ? (
-          <div className="flex items-center gap-2 font-sans text-sm text-brand-accent">
-            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-            <span>Executing Python code...</span>
-          </div>
+        ) : status === "waiting-input" || status === "running" ? (
+          streamingStdout || pendingInput ? (
+            <div className="space-y-3">
+              <InteractiveTerminalInput
+                streamingStdout={streamingStdout}
+                pendingInput={pendingInput}
+                onSubmitInput={onSubmitInput}
+              />
+              {!pendingInput ? (
+                <div className="flex items-center gap-2 font-sans text-xs text-brand-accent">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                  <span>Executing Python code...</span>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 font-sans text-sm text-brand-accent">
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              <span>Executing Python code...</span>
+            </div>
+          )
         ) : runtimeError && !result ? (
           <div className="rounded-[8px] border border-error-border bg-error-bg p-3.5 text-error">
             <div className="mb-1 flex items-center gap-1.5 font-sans text-xs font-semibold uppercase tracking-wider">

@@ -23,12 +23,20 @@ export async function streamAssistantReply(
   callbacks: AIStreamCallbacks,
   signal?: AbortSignal
 ): Promise<void> {
+  const { apiKey, ...jsonPayload } = payload;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (apiKey?.trim()) {
+    headers["x-groq-api-key"] = apiKey.trim();
+  }
+
   let response: Response;
   try {
     response = await fetch("/api/assistant", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      headers,
+      body: JSON.stringify(jsonPayload),
       signal,
     });
   } catch (err) {

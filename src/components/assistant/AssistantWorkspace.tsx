@@ -4,11 +4,19 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   AlertCircle,
+  Check,
+  ExternalLink,
+  Eye,
+  EyeOff,
   History,
+  KeyRound,
   MessageSquarePlus,
   Send,
   Sparkles,
   Square,
+  Trash2,
+  Volume2,
+  VolumeX,
   X,
 } from "lucide-react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
@@ -18,6 +26,8 @@ import {
   deriveConversationTitle,
 } from "@/lib/storage/assistant";
 import { useAssistantHistory } from "@/hooks/useAssistantHistory";
+import { useAssistantSettings } from "@/hooks/useAssistantSettings";
+import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
 import { fetchAssistantStatus, streamAssistantReply } from "@/lib/ai/client";
 import { ChatMessage } from "@/components/assistant/ChatMessage";
 import { ConversationSidebar } from "@/components/assistant/ConversationSidebar";
@@ -48,12 +58,33 @@ export function AssistantWorkspace() {
 function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
   const { conversations, activeId, setState, clearAll } =
     useAssistantHistory();
+  const {
+    userApiKey,
+    autoSpeak,
+    voiceName,
+    setUserApiKey,
+    clearUserApiKey,
+    setAutoSpeak,
+    setVoiceName,
+  } = useAssistantSettings();
+  const {
+    isSupported: voiceSupported,
+    voices,
+    isSpeaking,
+    speakingId,
+    speak,
+    stop: stopSpeech,
+  } = useSpeechSynthesis();
 
   const [chapterContext, setChapterContext] = useState<string>("all");
   const [input, setInput] = useState(initialPrompt);
   const [isStreaming, setIsStreaming] = useState(false);
   const [errorInfo, setErrorInfo] = useState<AIErrorInfo | null>(null);
   const [historyDrawerOpen, setHistoryDrawerOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [keyDraft, setKeyDraft] = useState("");
+  const [showKeyText, setShowKeyText] = useState(false);
+  const [keySavedFlash, setKeySavedFlash] = useState(false);
   const [serverStatus, setServerStatus] = useState<{
     configured: boolean;
     model: string;
@@ -62,6 +93,13 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
 
   const abortRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const speechPrefsRef = useRef({ autoSpeak, voiceName });
+
+  useEffect(() => {
+    speechPrefsRef.current = { autoSpeak, voiceName };
+  }, [autoSpeak, voiceName]);
+
+  const isProviderReady = Boolean(userApiKey || serverStatus?.configured);
 
   useEffect(() => {
     let mounted = true;
@@ -72,6 +110,22 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
       mounted = false;
     };
   }, []);
+
+  const handleSaveKey = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleaned = keyDraft.trim();
+    if (!cleaned) return;
+    setUserApiKey(cleaned);
+    setKeyDraft("");
+    setErrorInfo(null);
+    setKeySavedFlash(true);
+    setTimeout(() => setKeySavedFlash(false), 1800);
+  };
+
+  const handleClearKey = () => {
+    clearUserApiKey();
+    setKeyDraft("");
+  };
 
   const activeConversation = useMemo(
     () =>
@@ -86,6 +140,7 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
   }, [activeConversation?.messages.length, isStreaming]);
 
   const handleNewConversation = () => {
+    stopSpeech();
     if (isStreaming) {
       abortRef.current?.abort();
       setIsStreaming(false);
@@ -103,6 +158,7 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
   };
 
   const handleSelectConversation = (id: string) => {
+    stopSpeech();
     if (isStreaming) {
       abortRef.current?.abort();
       setIsStreaming(false);
@@ -131,6 +187,7 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
   };
 
   const handleClearAll = () => {
+    stopSpeech();
     if (isStreaming) {
       abortRef.current?.abort();
       setIsStreaming(false);
@@ -143,6 +200,7 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
     const content = (textOverride ?? input).trim();
     if (!content || isStreaming) return;
 
+    stopSpeech();
     setErrorInfo(null);
     if (!textOverride) setInput("");
 
@@ -215,6 +273,7 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
       {
         messages: requestMessages,
         chapterContext: chapterContext === "all" ? undefined : chapterContext,
+        apiKey: userApiKey || undefined,
       },
       {
         onToken: (token) => {
@@ -251,6 +310,17 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
                 : conv
             ),
           }));
+
+          if (
+            !controller.signal.aborted &&
+            speechPrefsRef.current.autoSpeak &&
+            accumulated.trim().length > 0
+          ) {
+            speak(accumulated, {
+              messageId: assistantMsgId,
+              voiceName: speechPrefsRef.current.voiceName,
+            });
+          }
         },
         onError: (err) => {
           setIsStreaming(false);
@@ -288,6 +358,75 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
     }
   };
 
+  const renderApiKeyForm = (compact = false) => (
+    <form
+      onSubmit={handleSaveKey}
+      className={
+        compact
+          ? "flex flex-wrap items-center gap-2"
+          : "mt-3 flex flex-col gap-2 sm:flex-row sm:items-center"
+      }
+    >
+      <div className="relative flex-1 min-w-[200px]">
+        <input
+          type={showKeyText ? "text" : "password"}
+          value={keyDraft}
+          onChange={(e) => setKeyDraft(e.target.value)}
+          placeholder={
+            userApiKey
+              ? `Saved key ending in ••••${userApiKey.slice(-4)} (paste new to replace)`
+              : "Paste your Groq API key (gsk_...)"
+          }
+          aria-label="Groq API key"
+          autoComplete="off"
+          spellCheck={false}
+          className="h-8 w-full rounded-[6px] border border-border bg-surface pl-2.5 pr-8 font-mono text-xs text-ink placeholder:text-ink-muted focus:border-brand-accent focus:outline-none"
+        />
+        <button
+          type="button"
+          onClick={() => setShowKeyText((v) => !v)}
+          aria-label={showKeyText ? "Hide API key" : "Show API key"}
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded p-1 text-ink-secondary hover:text-ink cursor-pointer"
+        >
+          {showKeyText ? (
+            <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
+          ) : (
+            <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+          )}
+        </button>
+      </div>
+
+      <div className="flex items-center gap-1.5">
+        <button
+          type="submit"
+          disabled={!keyDraft.trim()}
+          className="inline-flex h-8 items-center gap-1 rounded-[6px] bg-brand px-3 text-xs font-medium text-white transition-colors hover:bg-brand-hover disabled:opacity-45 disabled:pointer-events-none cursor-pointer"
+        >
+          {keySavedFlash ? (
+            <>
+              <Check className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Saved</span>
+            </>
+          ) : (
+            <span>Save Key</span>
+          )}
+        </button>
+
+        {userApiKey ? (
+          <button
+            type="button"
+            onClick={handleClearKey}
+            aria-label="Clear saved Groq API key"
+            className="inline-flex h-8 items-center gap-1 rounded-[6px] border border-border bg-surface px-2.5 text-xs font-medium text-ink-secondary hover:border-error-border hover:bg-error-bg hover:text-error cursor-pointer"
+          >
+            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Clear</span>
+          </button>
+        ) : null}
+      </div>
+    </form>
+  );
+
   const messages = activeConversation?.messages ?? [];
 
   return (
@@ -310,7 +449,7 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
       {/* Main Chat Panel */}
       <div className="flex min-w-0 flex-1 flex-col bg-surface">
         {/* Chat Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface-muted px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-border bg-surface-muted px-4 py-3">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -322,7 +461,7 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
             </button>
 
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-sm font-semibold text-ink">
                   Python AI Tutor
                 </h2>
@@ -330,10 +469,10 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
                   className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-medium ${
                     isStreaming
                       ? "border-brand-border bg-brand-light text-brand-accent"
-                      : serverStatus === null
-                        ? "border-border bg-surface text-ink-secondary"
-                        : serverStatus.configured
-                          ? "border-success-border bg-success-bg text-success"
+                      : isProviderReady
+                        ? "border-success-border bg-success-bg text-success"
+                        : serverStatus === null
+                          ? "border-border bg-surface text-ink-secondary"
                           : "border-warning-border bg-warning-bg text-warning"
                   }`}
                 >
@@ -341,25 +480,82 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
                     className={`h-1.5 w-1.5 rounded-full ${
                       isStreaming
                         ? "bg-brand animate-pulse"
-                        : serverStatus?.configured
+                        : isProviderReady
                           ? "bg-success"
-                          : "bg-warning"
+                          : serverStatus === null
+                            ? "bg-ink-muted"
+                            : "bg-warning"
                     }`}
                     aria-hidden="true"
                   />
                   {isStreaming
                     ? "Responding..."
-                    : serverStatus === null
-                      ? "Checking provider..."
-                      : serverStatus.configured
-                        ? `Groq · ${serverStatus.model}`
-                        : "API Key Required"}
+                    : userApiKey
+                      ? `Your Key · ${serverStatus?.model ?? "openai/gpt-oss-120b"}`
+                      : serverStatus === null
+                        ? "Checking provider..."
+                        : serverStatus.configured
+                          ? `Groq · ${serverStatus.model}`
+                          : "API Key Needed"}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {isSpeaking ? (
+              <button
+                type="button"
+                onClick={stopSpeech}
+                aria-label="Stop speaking answer"
+                className="inline-flex h-8 items-center gap-1.5 rounded-[6px] border border-brand bg-brand-light px-2.5 text-xs font-medium text-brand-accent hover:bg-brand/15 cursor-pointer"
+              >
+                <Square className="h-3 w-3" aria-hidden="true" />
+                <span>Stop Voice</span>
+              </button>
+            ) : null}
+
+            {voiceSupported ? (
+              <button
+                type="button"
+                onClick={() => {
+                  if (autoSpeak && isSpeaking) stopSpeech();
+                  setAutoSpeak(!autoSpeak);
+                }}
+                aria-pressed={autoSpeak}
+                aria-label={autoSpeak ? "Auto-voice replies enabled" : "Auto-voice replies disabled"}
+                title="Automatically read Groq AI answers aloud using browser speech synthesis"
+                className={`inline-flex h-8 items-center gap-1.5 rounded-[6px] border px-2.5 text-xs font-medium transition-colors cursor-pointer ${
+                  autoSpeak
+                    ? "border-brand-border bg-brand-light text-brand-accent"
+                    : "border-border bg-surface text-ink-secondary hover:bg-surface-secondary hover:text-ink"
+                }`}
+              >
+                {autoSpeak ? (
+                  <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <VolumeX className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+                <span className="hidden sm:inline">
+                  Voice: {autoSpeak ? "On" : "Off"}
+                </span>
+              </button>
+            ) : null}
+
+            <button
+              type="button"
+              onClick={() => setSettingsOpen((open) => !open)}
+              aria-expanded={settingsOpen}
+              className={`inline-flex h-8 items-center gap-1.5 rounded-[6px] border px-2.5 text-xs font-medium transition-colors cursor-pointer ${
+                settingsOpen || !isProviderReady
+                  ? "border-brand-border bg-brand-light text-brand-accent"
+                  : "border-border bg-surface text-ink hover:bg-surface-secondary"
+              }`}
+            >
+              <KeyRound className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>API Key</span>
+            </button>
+
             <label htmlFor="tutor-chapter-focus" className="sr-only">
               Focus chapter
             </label>
@@ -392,10 +588,64 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
           </div>
         </div>
 
+        {/* Collapsible Groq API Key & Voice Settings Panel */}
+        {settingsOpen ? (
+          <div className="border-b border-border bg-surface px-4 py-3 text-xs">
+            <div className="mx-auto max-w-3xl space-y-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="font-semibold text-ink">
+                  Groq API Key & Voice Settings
+                </p>
+                <a
+                  href="https://console.groq.com/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-brand-accent hover:underline"
+                >
+                  <span>Get a Groq API Key</span>
+                  <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                </a>
+              </div>
+
+              {renderApiKeyForm(true)}
+
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <p className="text-[11px] text-ink-secondary">
+                  Saved only in your browser&apos;s LocalStorage and sent only when chatting with Groq.
+                </p>
+
+                {voiceSupported && voices.length > 0 ? (
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="assistant-voice-select"
+                      className="text-[11px] font-medium text-ink-secondary"
+                    >
+                      Browser Voice:
+                    </label>
+                    <select
+                      id="assistant-voice-select"
+                      value={voiceName}
+                      onChange={(e) => setVoiceName(e.target.value)}
+                      className="h-7 max-w-[200px] rounded-[6px] border border-border bg-surface-muted px-2 text-[11px] text-ink focus:border-brand-accent focus:outline-none"
+                    >
+                      <option value="">System Default</option>
+                      {voices.map((v) => (
+                        <option key={`${v.name}-${v.lang}`} value={v.name}>
+                          {v.name} ({v.lang})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         {/* Message Feed or Welcome State */}
         <div className="flex-1 overflow-y-auto bg-surface-muted p-4 sm:p-6">
           {messages.length === 0 ? (
-            <div className="mx-auto flex max-w-2xl flex-col items-center justify-center py-8 text-center">
+            <div className="mx-auto flex max-w-2xl flex-col items-center justify-center py-6 text-center">
               <div className="flex h-11 w-11 items-center justify-center rounded-[10px] border border-border bg-surface text-brand-accent">
                 <Sparkles className="h-5 w-5" aria-hidden="true" />
               </div>
@@ -405,26 +655,29 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
               </h3>
               <p className="mt-2 max-w-md text-sm text-ink-secondary">
                 Ask me anything about Python basics, code examples, or
-                programming errors.
+                programming errors. Answers can also be read aloud via your browser&apos;s built-in voice.
               </p>
 
-              {serverStatus && !serverStatus.configured ? (
-                <div className="mt-5 w-full rounded-[10px] border border-warning-border bg-warning-bg p-4 text-left text-xs text-warning">
-                  <p className="font-semibold text-warning">
-                    Groq API Key Not Configured
+              {serverStatus && !isProviderReady ? (
+                <div className="mt-5 w-full rounded-[10px] border border-brand-border bg-surface p-4 text-left text-xs text-ink">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="font-semibold text-ink">
+                      Connect Your Groq API Key
+                    </p>
+                    <a
+                      href="https://console.groq.com/keys"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-brand-accent hover:underline"
+                    >
+                      <span>Create key at Groq Console</span>
+                      <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                    </a>
+                  </div>
+                  <p className="mt-1 leading-relaxed text-ink-secondary">
+                    Paste your personal Groq API key below to start chatting. It stays saved in your browser&apos;s LocalStorage and is never stored on a backend database.
                   </p>
-                  <p className="mt-1 leading-relaxed">
-                    To connect the real Groq tutor, add{" "}
-                    <code className="rounded bg-surface px-1.5 py-0.5 font-mono">
-                      GROQ_API_KEY
-                    </code>{" "}
-                    and{" "}
-                    <code className="rounded bg-surface px-1.5 py-0.5 font-mono">
-                      GROQ_MODEL
-                    </code>{" "}
-                    to <code className="font-mono">.env.local</code> on the
-                    server. Keys are never stored or exposed in the browser.
-                  </p>
+                  {renderApiKeyForm(false)}
                 </div>
               ) : null}
 
@@ -452,6 +705,18 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
                     idx === messages.length - 1 &&
                     msg.role === "assistant"
                   }
+                  voiceSupported={voiceSupported}
+                  isSpeaking={speakingId === msg.id}
+                  onToggleSpeak={() => {
+                    if (speakingId === msg.id) {
+                      stopSpeech();
+                    } else {
+                      speak(msg.content, {
+                        messageId: msg.id,
+                        voiceName,
+                      });
+                    }
+                  }}
                 />
               ))}
               <div ref={messagesEndRef} />
@@ -473,12 +738,22 @@ function AssistantWorkspaceInner({ initialPrompt }: { initialPrompt: string }) {
               <div>
                 <p className="font-semibold text-error">
                   {errorInfo.code === "NOT_CONFIGURED"
-                    ? "Server AI Configuration Needed"
+                    ? "Groq API Key Required"
                     : errorInfo.code === "RATE_LIMITED"
                       ? "Rate Limit Reached"
                       : "Could Not Get AI Response"}
                 </p>
                 <p className="mt-0.5">{errorInfo.message}</p>
+                {errorInfo.code === "NOT_CONFIGURED" && !settingsOpen ? (
+                  <button
+                    type="button"
+                    onClick={() => setSettingsOpen(true)}
+                    className="mt-1.5 inline-flex items-center gap-1 rounded-[5px] border border-error-border bg-surface px-2 py-0.5 text-[11px] font-medium text-ink hover:bg-surface-secondary cursor-pointer"
+                  >
+                    <KeyRound className="h-3 w-3 text-brand-accent" aria-hidden="true" />
+                    <span>Enter Groq API Key</span>
+                  </button>
+                ) : null}
               </div>
             </div>
             <button
